@@ -5,9 +5,9 @@ import { AuthController } from '@controllers/auth'
 
 import { authStrict } from '@middleware/auth.middleware'
 
-export function createAuthRouter(io: Server): Router {
+export function createAuthRouter(): Router {
   const authRouter = Router()
-  const authController = new AuthController(io)
+  const authController = new AuthController()
 
   authRouter.post('/signin', authController.signup)
 

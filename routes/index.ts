@@ -8,7 +8,7 @@ enum RouterVariants {
 }
 
 export function createRoutes(io: Server): Record<RouterVariants, Router> {
-  const authRouter = createAuthRouter(io)
+  const authRouter = createAuthRouter()
   return {
     authRouter,
   }

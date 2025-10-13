@@ -7,14 +7,12 @@ import { errorsCodes } from '@constants/common'
 dotenv.config()
 
 export class AuthController {
-  io: Server
-
-  constructor(io: Server) {
-    this.io = io
-  }
+  constructor() {}
 
   async signup(req: Request, res: Response) {
     try {
+      const { title } = req.body
+      console.log(title)
       console.log(1)
 
       return res.status(201).json({ message: 'User created' })
