@@ -10,20 +10,15 @@ import { UserType } from '../customTypes/user'
 
 interface IUser {
   _id: string
-  profile: {
-    email: string
-  }
-  roles: string[]
+  login: string
 }
 
 export const authStrict = async (req: Request, res: Response, next: NextFunction) => {
   if (req.method === 'OPTIONS') {
     return next()
   }
-
   try {
     const token = req.headers.authorization?.split(' ')[1]
-
     if (!token) {
       return res.status(401).json({
         code: errorsCodes.NO_AUTHORIZATION,
@@ -32,7 +27,7 @@ export const authStrict = async (req: Request, res: Response, next: NextFunction
     }
     const decoded = jwt.verify(token, config.get('jwtSecret')) as UserType
 
-    const matchUser: IUser | null = await User.findOne({ _id: decoded.userId }, { 'profile.email': 1, roles: 1 })
+    const matchUser: IUser | null = await User.findOne({ _id: decoded.userId }, { login: 1 })
 
     if (!matchUser) {
       return res.status(401).json({
@@ -43,8 +38,7 @@ export const authStrict = async (req: Request, res: Response, next: NextFunction
 
     req.user = {
       userId: matchUser._id,
-      email: matchUser.profile.email,
-      roles: matchUser.roles,
+      login: matchUser.login,
     }
 
     return next()

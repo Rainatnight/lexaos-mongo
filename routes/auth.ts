@@ -9,8 +9,7 @@ export function createAuthRouter(): Router {
   const authRouter = Router()
   const authController = new AuthController()
 
-  // authRouter.post('/signin', authController.signup)
   authRouter.post('/create', authController.signup)
-
+  authRouter.get('/user', authStrict, authController.getUser)
   return authRouter
 }
