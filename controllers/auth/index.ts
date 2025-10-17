@@ -65,4 +65,41 @@ export class AuthController {
       return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
     }
   }
+
+  async login(req: Request, res: Response) {
+    try {
+      const { login, password } = req.body
+
+      if (!password.trim()) {
+        return res.status(400).json({ code: errorsCodes.INVALID_PASSWORD, msg: 'Invalid password' })
+      }
+
+      const user = await Users.findOne({ login }, { login: 1, password: 1 }).lean()
+
+      if (!user) {
+        return res.status(400).json({ code: errorsCodes.USER_NOT_FOUND, msg: 'User not found' })
+      }
+
+      const isMath = await bcrypt.compare(password, user.password)
+
+      if (!isMath) {
+        return res.status(400).json({ code: errorsCodes.INVALID_PASSWORD, msg: 'Invalid password' })
+      }
+      const expiredToken = new Date(Date.now() + DEFAULT_LOGIN_EXPIRATION_DAYS_METEOR * 86400000)
+
+      const token = jwt.sign(
+        {
+          userId: user?._id,
+          login: user.login,
+        },
+        config.get('jwtSecret'),
+
+        { expiresIn: expiredToken.getTime() }
+      )
+
+      return res.json({ token, expiredToken, userId: user._id })
+    } catch (error) {
+      return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
+    }
+  }
 }

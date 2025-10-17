@@ -10,6 +10,8 @@ export function createAuthRouter(): Router {
   const authController = new AuthController()
 
   authRouter.post('/create', authController.signup)
+  authRouter.put('/login', authController.login)
+
   authRouter.get('/user', authStrict, authController.getUser)
   return authRouter
 }
