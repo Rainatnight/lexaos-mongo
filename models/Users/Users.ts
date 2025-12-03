@@ -1,7 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
 
-import { REGEXP_EMAIL, validateEmail } from '@helpers/validator/validateEmail'
-
 import { UserType } from './Users.type'
 
 const UserSchema = new Schema(
