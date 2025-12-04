@@ -12,10 +12,14 @@ export class FoldersController {
     try {
       const { userId } = req.user as any
       const items = await Folders.find({ userId }, { createdAt: 0, updatedAt: 0, __v: 0, userId: 0 }).lean()
-      const mappedItems = items.map((item) => ({
-        ...item,
-        id: item._id,
-      }))
+      const mappedItems = items.map((item) => {
+        const { _id, ...rest } = item
+        return {
+          ...rest,
+          id: _id,
+        }
+      })
+
       res.json(mappedItems)
     } catch (error) {
       return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
@@ -39,7 +43,6 @@ export class FoldersController {
 
       return res.json(folder)
     } catch (error) {
-      console.log(error)
       return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
     }
   }
