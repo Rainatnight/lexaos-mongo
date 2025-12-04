@@ -46,4 +46,29 @@ export class FoldersController {
       return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
     }
   }
+
+  async renameFolder(req: Request, res: Response) {
+    try {
+      const { id, newName } = req.body
+      const { userId } = req.user as any
+      console.log('rename')
+      if (!id || !newName) {
+        return res.status(400).json({ error: 'id and newName are required' })
+      }
+
+      const folder = await Folders.findOneAndUpdate(
+        { _id: id, userId }, // проверяем, что папка принадлежит юзеру!
+        { name: newName },
+        { new: true }
+      ).lean()
+
+      if (!folder) {
+        return res.status(404).json({ error: 'Folder not found' })
+      }
+
+      return res.json(folder)
+    } catch (error) {
+      return res.status(500).json({ code: errorsCodes.SOMETHING_WRONG })
+    }
+  }
 }
